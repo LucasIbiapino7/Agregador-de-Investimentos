@@ -1,30 +1,16 @@
-package com.devsuperior.agregadordeinvestimentos.entities;
+package com.devsuperior.agregadordeinvestimentos.dto;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
+public class UserDTO {
 
-import java.time.Instant;
-
-@Entity
-@Table(name = "tb_user")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String email;
     private String password;
 
-    @CreationTimestamp
-    private Instant createdTimestamp;
-    @CreationTimestamp
-    private Instant updateTimestamp;
-
-    public User() {
+    public UserDTO() {
     }
 
-    public User(Long id, String username, String email, String password) {
+    public UserDTO(Long id, String username, String email, String password) {
         this.id = id;
         this.username = username;
         this.email = email;

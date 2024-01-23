@@ -40,4 +40,19 @@ public class UserService {
         List<User> result = repository.findAll();
         return result.stream().map(x -> new UserMinDTO(x)).toList();
     }
+
+    @Transactional
+    public UserMinDTO update(Long id, UserDTO dto) {
+        User user = repository.getReferenceById(id);
+        user.setEmail(dto.getEmail());
+        user.setUsername(dto.getUsername());
+        user.setPassword(dto.getPassword());
+        user = repository.save(user);
+        return new UserMinDTO(user);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 }

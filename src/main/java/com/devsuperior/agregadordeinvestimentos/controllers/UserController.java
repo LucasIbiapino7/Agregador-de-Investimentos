@@ -1,6 +1,7 @@
 package com.devsuperior.agregadordeinvestimentos.controllers;
 
 import com.devsuperior.agregadordeinvestimentos.dto.AccountDTO;
+import com.devsuperior.agregadordeinvestimentos.dto.AccountMinDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.UserDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.UserMinDTO;
 import com.devsuperior.agregadordeinvestimentos.services.AccountService;
@@ -58,6 +59,12 @@ public class UserController {
     public ResponseEntity<AccountDTO> insertAccountUser(@PathVariable Long id, @RequestBody AccountDTO dto){
         dto = accountService.insertAccountUser(id, dto);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping(value = "/{id}/accounts")
+    public ResponseEntity<List<AccountMinDTO>> getAllUserAccount(@PathVariable Long id){
+        List<AccountMinDTO> result = service.getAllUserAccount(id);
+        return ResponseEntity.ok(result);
     }
 
 

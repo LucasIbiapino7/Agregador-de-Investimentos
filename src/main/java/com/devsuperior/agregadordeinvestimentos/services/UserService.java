@@ -1,8 +1,10 @@
 package com.devsuperior.agregadordeinvestimentos.services;
 
 import com.devsuperior.agregadordeinvestimentos.dto.AccountDTO;
+import com.devsuperior.agregadordeinvestimentos.dto.AccountMinDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.UserDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.UserMinDTO;
+import com.devsuperior.agregadordeinvestimentos.entities.Account;
 import com.devsuperior.agregadordeinvestimentos.entities.User;
 import com.devsuperior.agregadordeinvestimentos.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +57,14 @@ public class UserService {
     @Transactional
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AccountMinDTO> getAllUserAccount(Long id){
+        //Lembrar de tentar criar um método que faça apenas uma consulta no Banco
+        //Lembrar de tratar as exceções
+        User user = repository.getReferenceById(id);
+        List<Account> accounts = user.getAccounts();
+        return accounts.stream().map(x -> new AccountMinDTO(x)).toList();
     }
 }

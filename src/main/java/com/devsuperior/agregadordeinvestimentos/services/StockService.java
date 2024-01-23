@@ -34,7 +34,7 @@ public class StockService {
     }
 
     @Transactional
-    public String insertStockAccount(Long id, AccountStockDTO dto){
+    public AccountStockDTO insertStockAccount(Long id, AccountStockDTO dto){
         //LEMBRAR DE TRATAR AS EXCEÇÕES
         Account account = accountRepository.getReferenceById(id);
         Stock stock = stockRepository.getReferenceById(dto.getStockId());
@@ -42,6 +42,6 @@ public class StockService {
         AccountStock accountStock = new AccountStock(account, stock, dto.getQuantity());
         accountStock =  accountStockRepository.save(accountStock);
 
-        return "sucesso";
+        return new AccountStockDTO(stock.getStockId(), dto.getQuantity(), 0.0);
     }
 }

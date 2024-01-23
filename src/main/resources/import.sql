@@ -7,8 +7,8 @@ INSERT INTO tb_account (description, user_id) VALUES ('conta do maria', 2)
 
 INSERT INTO tb_billing_address (account_id, street, number) VALUES (1, 'raposa', 150)
 
-INSERT INTO tb_stock (stock_id, description) VALUES ('AMZN', 'ação da Amazon')
+INSERT INTO tb_stock (stock_id, description) VALUES ('ITUB4', 'Banco Itau')
 
-INSERT INTO tb_account_stock (account_id, stock_id, quantity) VALUES (1, 'AMZN', 20)
+INSERT INTO tb_account_stock (account_id, stock_id, quantity) VALUES (1, 'ITUB4', 20)
 
 

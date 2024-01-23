@@ -58,7 +58,8 @@ public class UserController {
     @PostMapping(value = "/{id}/accounts")
     public ResponseEntity<AccountDTO> insertAccountUser(@PathVariable Long id, @RequestBody AccountDTO dto){
         dto = accountService.insertAccountUser(id, dto);
-        return ResponseEntity.ok(dto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
+        return ResponseEntity.created(uri).body(dto);
     }
 
     @GetMapping(value = "/{id}/accounts")

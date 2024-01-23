@@ -7,6 +7,8 @@ import com.devsuperior.agregadordeinvestimentos.dto.UserMinDTO;
 import com.devsuperior.agregadordeinvestimentos.entities.Account;
 import com.devsuperior.agregadordeinvestimentos.entities.User;
 import com.devsuperior.agregadordeinvestimentos.repositories.UserRepository;
+import com.devsuperior.agregadordeinvestimentos.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +36,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserMinDTO findById(Long id) {
-        User user = repository.findById(id).get();
+        User user = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário Não Encontrado"));
         return new UserMinDTO(user);
     }
 
@@ -46,16 +48,23 @@ public class UserService {
 
     @Transactional
     public UserMinDTO update(Long id, UserDTO dto) {
-        User user = repository.getReferenceById(id);
-        user.setEmail(dto.getEmail());
-        user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword());
-        user = repository.save(user);
-        return new UserMinDTO(user);
+        try {
+            User user = repository.getReferenceById(id);
+            user.setEmail(dto.getEmail());
+            user.setUsername(dto.getUsername());
+            user.setPassword(dto.getPassword());
+            user = repository.save(user);
+            return new UserMinDTO(user);
+        }catch (EntityNotFoundException e){
+            throw new ResourceNotFoundException("Usuário Não Encontrado");
+        }
     }
 
     @Transactional
     public void delete(Long id) {
+        if (!repository.existsById(id)){
+            throw new ResourceNotFoundException("Usuário Não Encontrado");
+        }
         repository.deleteById(id);
     }
 

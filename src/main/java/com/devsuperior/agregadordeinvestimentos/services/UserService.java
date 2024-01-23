@@ -1,5 +1,6 @@
 package com.devsuperior.agregadordeinvestimentos.services;
 
+import com.devsuperior.agregadordeinvestimentos.dto.AccountDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.UserDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.UserMinDTO;
 import com.devsuperior.agregadordeinvestimentos.entities.User;

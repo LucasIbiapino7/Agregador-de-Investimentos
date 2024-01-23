@@ -1,7 +1,9 @@
 package com.devsuperior.agregadordeinvestimentos.controllers;
 
+import com.devsuperior.agregadordeinvestimentos.dto.AccountDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.UserDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.UserMinDTO;
+import com.devsuperior.agregadordeinvestimentos.services.AccountService;
 import com.devsuperior.agregadordeinvestimentos.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,9 @@ public class UserController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    private AccountService accountService;
 
     @PostMapping
     public ResponseEntity<UserMinDTO> insert(@RequestBody UserDTO dto){
@@ -47,6 +52,12 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable Long id){
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/{id}/accounts")
+    public ResponseEntity<AccountDTO> insertAccountUser(@PathVariable Long id, @RequestBody AccountDTO dto){
+        dto = accountService.insertAccountUser(id, dto);
+        return ResponseEntity.ok(dto);
     }
 
 

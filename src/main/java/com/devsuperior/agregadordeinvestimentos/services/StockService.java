@@ -8,6 +8,7 @@ import com.devsuperior.agregadordeinvestimentos.entities.Stock;
 import com.devsuperior.agregadordeinvestimentos.repositories.AccountRepository;
 import com.devsuperior.agregadordeinvestimentos.repositories.AccountStockRepository;
 import com.devsuperior.agregadordeinvestimentos.repositories.StockRepository;
+import com.devsuperior.agregadordeinvestimentos.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,12 +37,10 @@ public class StockService {
     @Transactional
     public AccountStockDTO insertStockAccount(Long id, AccountStockDTO dto){
         //LEMBRAR DE TRATAR AS EXCEÇÕES
-        Account account = accountRepository.getReferenceById(id);
-        Stock stock = stockRepository.getReferenceById(dto.getStockId());
-
+        Account account = accountRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Conta Não Encontrada"));
+        Stock stock = stockRepository.findById(dto.getStockId()).orElseThrow(() -> new ResourceNotFoundException("Stock Não encontrado"));
         AccountStock accountStock = new AccountStock(account, stock, dto.getQuantity());
         accountStock =  accountStockRepository.save(accountStock);
-
         return new AccountStockDTO(stock.getStockId(), dto.getQuantity(), 0.0);
     }
 }

@@ -39,8 +39,10 @@ public class AccountService {
     public List<AccountStockDTO> getStocksByAccount(Long id){
         Account account = accountRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Conta Não Encontrada"));
         List<AccountStockDTO> stocks = new ArrayList<>();
-        for (AccountStock x : account.getAccountStocks()){
-            stocks.add(new AccountStockDTO(x.getStock().getStockId(), x.getQuantity(), getTotal(x.getQuantity(), x.getStock().getStockId())));
+        for (AccountStock accountStock : account.getAccountStocks()){
+            stocks.add(new AccountStockDTO(accountStock.getStock().getStockId(),
+                    accountStock.getQuantity(),
+                    getTotal(accountStock.getQuantity(), accountStock.getStock().getStockId())));
         }
         return stocks;
     }

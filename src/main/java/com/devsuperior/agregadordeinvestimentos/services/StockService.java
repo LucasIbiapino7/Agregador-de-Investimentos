@@ -1,5 +1,7 @@
 package com.devsuperior.agregadordeinvestimentos.services;
 
+import com.devsuperior.agregadordeinvestimentos.client.BrapiClient;
+import com.devsuperior.agregadordeinvestimentos.client.dto.BrapiResponseDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.AccountStockDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.StockDTO;
 import com.devsuperior.agregadordeinvestimentos.entities.Account;
@@ -10,11 +12,15 @@ import com.devsuperior.agregadordeinvestimentos.repositories.AccountStockReposit
 import com.devsuperior.agregadordeinvestimentos.repositories.StockRepository;
 import com.devsuperior.agregadordeinvestimentos.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StockService {
+
+    @Value("#{environment.TOKEN}")
+    private String TOKEN;
 
     @Autowired
     private StockRepository stockRepository;
@@ -25,13 +31,22 @@ public class StockService {
     @Autowired
     private AccountStockRepository accountStockRepository;
 
+    @Autowired
+    private BrapiClient brapiClient;
+
     @Transactional
     public StockDTO insert(StockDTO dto) {
-        Stock stock = new Stock();
-        stock.setStockId(dto.getStockId());
-        stock.setDescription(dto.getDescription());
-        stock = stockRepository.save(stock);
-        return new StockDTO(stock);
+        try {
+            Stock stock = new Stock();
+            //Validar se o stockId existe na Brapi
+            BrapiResponseDTO response = brapiClient.getQuote(TOKEN, dto.getStockId());
+            stock.setStockId(dto.getStockId());
+            stock.setDescription(response.getResults().getFirst().getLongName());
+            stock = stockRepository.save(stock);
+            return new StockDTO(stock);
+        }catch (Exception e){
+            throw new ResourceNotFoundException("Recurso Não Encontrado na Brapi");
+        }
     }
 
     @Transactional

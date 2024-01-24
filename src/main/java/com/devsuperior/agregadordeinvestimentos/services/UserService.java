@@ -1,11 +1,10 @@
 package com.devsuperior.agregadordeinvestimentos.services;
 
-import com.devsuperior.agregadordeinvestimentos.dto.AccountDTO;
-import com.devsuperior.agregadordeinvestimentos.dto.AccountMinDTO;
-import com.devsuperior.agregadordeinvestimentos.dto.UserDTO;
-import com.devsuperior.agregadordeinvestimentos.dto.UserMinDTO;
+import com.devsuperior.agregadordeinvestimentos.dto.*;
 import com.devsuperior.agregadordeinvestimentos.entities.Account;
 import com.devsuperior.agregadordeinvestimentos.entities.User;
+import com.devsuperior.agregadordeinvestimentos.projections.UserAccountStocksProjection;
+import com.devsuperior.agregadordeinvestimentos.repositories.AccountRepository;
 import com.devsuperior.agregadordeinvestimentos.repositories.UserRepository;
 import com.devsuperior.agregadordeinvestimentos.services.exceptions.DatabaseException;
 import com.devsuperior.agregadordeinvestimentos.services.exceptions.ResourceNotFoundException;
@@ -16,13 +15,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository repository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private BrapiService brapiService;
 
     @Transactional
     public UserMinDTO insert(UserDTO dto) {
@@ -86,5 +91,34 @@ public class UserService {
         }catch (EntityNotFoundException e){
             throw new ResourceNotFoundException("Usuário Não Encontrado");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public UserAccountStocksDTO getUserAccountStock(Long id) {
+        List<UserAccountStocksProjection> result = accountRepository.getUserAccountStock(id);
+        if (result.isEmpty()) {
+            throw new ResourceNotFoundException("O Usuário não possui contas");
+        }
+        UserAccountStocksDTO dto = new UserAccountStocksDTO();
+        dto.setUsername(result.getFirst().getUsername());
+
+        Map<Long, AccountStockListDTO> map = new HashMap<>();
+
+        for (UserAccountStocksProjection projection : result){
+            if (!map.containsKey(projection.getAccountId())){
+                map.put(projection.getAccountId(), new AccountStockListDTO(projection.getAccountId(), projection.getDescription()));
+            }
+            if (!(projection.getStockId() == null)){
+                AccountStockListDTO test = map.get(projection.getAccountId());
+                test.getAccountStock().add(
+                        new AccountStockDTO(projection.getStockId(),
+                                projection.getQuantity(),
+                                brapiService.getTotal(projection.getQuantity(), projection.getStockId())));
+            }
+        }
+
+        dto.setAccounts(map);
+
+        return dto;
     }
 }

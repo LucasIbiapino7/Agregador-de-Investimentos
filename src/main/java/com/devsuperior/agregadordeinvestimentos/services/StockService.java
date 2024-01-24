@@ -2,6 +2,7 @@ package com.devsuperior.agregadordeinvestimentos.services;
 
 import com.devsuperior.agregadordeinvestimentos.client.BrapiClient;
 import com.devsuperior.agregadordeinvestimentos.client.dto.BrapiResponseDTO;
+import com.devsuperior.agregadordeinvestimentos.dto.AccountMinDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.AccountStockDTO;
 import com.devsuperior.agregadordeinvestimentos.dto.StockDTO;
 import com.devsuperior.agregadordeinvestimentos.entities.Account;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class StockService {
@@ -57,5 +60,11 @@ public class StockService {
         AccountStock accountStock = new AccountStock(account, stock, dto.getQuantity());
         accountStock =  accountStockRepository.save(accountStock);
         return new AccountStockDTO(stock.getStockId(), dto.getQuantity(), 0.0);
+    }
+
+    @Transactional(readOnly = true)
+    public List<StockDTO> getAll() {
+        List<Stock> result = stockRepository.findAll();
+        return result.stream().map(x -> new StockDTO(x)).toList();
     }
 }

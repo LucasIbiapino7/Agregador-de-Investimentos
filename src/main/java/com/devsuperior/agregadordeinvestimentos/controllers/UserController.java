@@ -1,9 +1,6 @@
 package com.devsuperior.agregadordeinvestimentos.controllers;
 
-import com.devsuperior.agregadordeinvestimentos.dto.AccountDTO;
-import com.devsuperior.agregadordeinvestimentos.dto.AccountMinDTO;
-import com.devsuperior.agregadordeinvestimentos.dto.UserDTO;
-import com.devsuperior.agregadordeinvestimentos.dto.UserMinDTO;
+import com.devsuperior.agregadordeinvestimentos.dto.*;
 import com.devsuperior.agregadordeinvestimentos.services.AccountService;
 import com.devsuperior.agregadordeinvestimentos.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +63,12 @@ public class UserController {
     public ResponseEntity<List<AccountMinDTO>> getAllUserAccount(@PathVariable Long id){
         List<AccountMinDTO> result = service.getAllUserAccount(id);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/{id}/accounts/stocks")
+    public ResponseEntity<UserAccountStocksDTO> test(@PathVariable Long id){
+        UserAccountStocksDTO dto = service.getUserAccountStock(id);
+        return ResponseEntity.ok(dto);
     }
 
 

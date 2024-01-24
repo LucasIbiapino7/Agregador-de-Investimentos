@@ -23,9 +23,6 @@ import java.util.List;
 @Service
 public class AccountService {
 
-    @Value("#{environment.TOKEN}")
-    private String TOKEN;
-
     @Autowired
     private AccountRepository accountRepository;
 
@@ -33,7 +30,7 @@ public class AccountService {
     private UserRepository userRepository;
 
     @Autowired
-    private BrapiClient brapiClient;
+    private BrapiService brapiService;
 
     @Transactional(readOnly = true)
     public List<AccountStockDTO> getStocksByAccount(Long id){
@@ -42,20 +39,9 @@ public class AccountService {
         for (AccountStock accountStock : account.getAccountStocks()){
             stocks.add(new AccountStockDTO(accountStock.getStock().getStockId(),
                     accountStock.getQuantity(),
-                    getTotal(accountStock.getQuantity(), accountStock.getStock().getStockId())));
+                    brapiService.getTotal(accountStock.getQuantity(), accountStock.getStock().getStockId())));
         }
         return stocks;
-    }
-
-    private Double getTotal(Integer quantity, String stockId) {
-        try {
-            BrapiResponseDTO response = brapiClient.getQuote(TOKEN, stockId);
-            Double price = response.getResults().getFirst().getRegularMarketPrice();
-            return quantity * price;
-        }catch (Exception e){
-            throw new ResourceNotFoundException("Recurso Não Existe na Brapi");
-        }
-
     }
 
     @Transactional

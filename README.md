@@ -74,15 +74,8 @@ Pré-requisitos: Java 11
 
 ```bash
 # clonar repositório
-git clone https://github.com/devsuperior/sds1-wmazoni
-
-# entrar na pasta do projeto back end
-cd backend
-
-# executar o projeto
-./mvnw spring-boot:run
+git clone git@github.com:LucasIbiapino7/Agregador-de-Investimentos.git
 ```
-
 # Autor
 
 Lucas Ibiapino Do Nascimento Duarte
